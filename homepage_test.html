@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LA VISIONS | Observation as Strategy</title>
+    <style>
+        :root {
+            --navy: #00117a;
+            --white: #ffffff;
+            --ease: cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; cursor: none; }
+
+        body {
+            background-color: var(--white);
+            color: var(--navy);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            height: 100vh; width: 100vw; overflow: hidden;
+            display: flex; justify-content: center; align-items: center;
+        }
+
+        #cursor {
+            width: 6px; height: 6px;
+            background: var(--navy);
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            z-index: 9999;
+            transition: transform 0.1s;
+        }
+
+        /* Splash Screen */
+        #splash {
+            position: fixed; inset: 0; background: var(--white);
+            z-index: 2000; display: flex; justify-content: center; align-items: center;
+            transition: opacity 1s var(--ease);
+        }
+
+        #splash span {
+            font-size: 0.7rem; letter-spacing: 0.8em;
+            text-transform: uppercase; opacity: 0.5;
+            transition: opacity 0.3s;
+        }
+
+        #splash:hover span { opacity: 1; }
+
+        /* Main Viewport */
+        .viewport {
+            position: relative; width: 100%; height: 100%;
+            display: flex; justify-content: center; align-items: center;
+            opacity: 0; transition: opacity 2s var(--ease);
+        }
+
+        .nucleus { position: relative; z-index: 100; text-align: center; }
+        .nucleus img { 
+            width: 200px; height: auto; 
+            transition: opacity 0.8s var(--ease), transform 0.8s var(--ease); 
+            display: block;
+        }
+
+        .slogan {
+            position: absolute; top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 0.85rem; text-transform: uppercase;
+            letter-spacing: 0.6em; white-space: nowrap;
+            opacity: 0; transition: opacity 0.8s var(--ease);
+            pointer-events: none; font-weight: 300;
+        }
+
+        .is-active img { opacity: 0; transform: scale(0.9); }
+        .is-active .slogan { opacity: 1; }
+
+        /* Ray System */
+        .ray {
+            position: absolute; text-decoration: none; color: var(--navy);
+            font-size: 0.65rem; font-weight: 700; text-transform: uppercase;
+            letter-spacing: 0.3em; display: flex; align-items: center; z-index: 50;
+            transition: 0.4s var(--ease);
+        }
+
+        .line { background: var(--navy); opacity: 0.1; transition: opacity 0.4s var(--ease); }
+
+        @media (min-width: 769px) {
+            .ray-1 { top: 25%; right: 15%; } 
+            .ray-2 { left: 12%; top: 50%; transform: translateY(-50%); flex-direction: row-reverse; } 
+            .ray-3 { bottom: 25%; right: 15%; } 
+            .line { height: 1px; width: 80px; }
+            .ray-1 .line { margin-right: 15px; transform: rotate(-15deg); }
+            .ray-2 .line { margin-left: 15px; }
+            .ray-3 .line { margin-right: 15px; transform: rotate(15deg); }
+            .ray:hover .line { opacity: 0.5; width: 100px; }
+        }
+
+        @media (max-width: 768px) {
+            .nucleus img { width: 150px; }
+            .slogan { font-size: 0.65rem; letter-spacing: 0.3em; }
+            .ray { left: 50%; transform: translateX(-50%); flex-direction: column; }
+            .ray-1 { top: 15%; flex-direction: column-reverse; }
+            .ray-2 { bottom: 28%; }
+            .ray-3 { bottom: 15%; }
+            .line { width: 1px; height: 30px; margin: 10px 0; }
+        }
+
+        /* Audio Control */
+        #audio-toggle {
+            position: fixed; bottom: 40px; right: 40px;
+            z-index: 3000; font-size: 0.6rem; letter-spacing: 0.3em;
+            text-transform: uppercase; opacity: 0;
+            transition: opacity 1s var(--ease), color 0.3s;
+        }
+        #audio-toggle.visible { opacity: 0.4; }
+        #audio-toggle:hover { opacity: 1; color: var(--navy); }
+
+        .modal {
+            position: fixed; inset: 0; background: var(--white);
+            z-index: 1000; display: flex; flex-direction: column;
+            justify-content: center; padding: 12%;
+            transform: translateY(100%); transition: transform 0.6s var(--ease);
+        }
+        .modal.open { transform: translateY(0); }
+        .close-btn { position: absolute; top: 40px; right: 40px; font-size: 0.7rem; font-weight: 700; }
+    </style>
+</head>
+<body>
+
+    <div id="cursor"></div>
+
+    <div id="splash" onclick="startExperience()">
+        <span>ENTER VISION</span>
+    </div>
+
+    <div id="audio-toggle" onclick="toggleMute()">Audio: ON</div>
+
+    <audio id="bg-audio" loop>
+        <source src="track.mp3" type="audio/mpeg">
+    </audio>
+
+    <div class="viewport" id="viewport">
+        <div class="nucleus" onclick="toggleSlogan()">
+            <img src="LA visions_png_rgb-06.png" alt="LA Visions">
+            <div class="slogan">Observation as Strategy</div>
+        </div>
+
+        <a href="#" class="ray ray-1" onclick="openProj('Startobserve', 'The eye that observes. A critical thinking journal focused on perspectives—less like a square, more like a circle.')">
+            <div class="line"></div>
+            <span>Startobserve</span>
+        </a>
+
+        <a href="#" class="ray ray-2" onclick="openProj('Prvrtd', 'The streetwear fetish boundary. Defying observation through design.')">
+            <div class="line"></div>
+            <span>Prvrtd</span>
+        </a>
+
+        <a href="#" class="ray ray-3" onclick="openProj('Consult & Travel', 'Where global vision meets strategic alignment. Coming soon.')">
+            <div class="line"></div>
+            <span>Consult&Travel</span>
+        </a>
+    </div>
+
+    <div id="modal" class="modal">
+        <div class="close-btn" onclick="closeModal()">[ CLOSE ]</div>
+        <h2 id="modal-title" style="letter-spacing: 0.2em; text-transform: uppercase;"></h2>
+        <p id="modal-desc" style="font-weight: 300; line-height: 1.6; max-width: 500px; margin-top: 20px;"></p>
+    </div>
+
+    <script>
+        const viewport = document.getElementById('viewport');
+        const audio = document.getElementById('bg-audio');
+        const splash = document.getElementById('splash');
+        const modal = document.getElementById('modal');
+        const cursor = document.getElementById('cursor');
+        const audioBtn = document.getElementById('audio-toggle');
+
+        document.addEventListener('mousemove', e => {
+            cursor.style.left = e.clientX + 'px';
+            cursor.style.top = e.clientY + 'px';
+        });
+
+        function startExperience() {
+            splash.style.opacity = '0';
+            setTimeout(() => splash.style.display = 'none', 1000);
+            viewport.style.opacity = '1';
+            audioBtn.classList.add('visible');
+            audio.currentTime = 350; 
+            audio.play();
+        }
+
+        function toggleSlogan() { viewport.classList.toggle('is-active'); }
+
+        function toggleMute() {
+            event.stopPropagation();
+            if (audio.muted) {
+                audio.muted = false;
+                audioBtn.innerText = "Audio: ON";
+            } else {
+                audio.muted = true;
+                audioBtn.innerText = "Audio: OFF";
+            }
+        }
+
+        audio.addEventListener('timeupdate', () => {
+            if (audio.currentTime >= 420) { 
+                audio.currentTime = 350; 
+            }
+        });
+
+        function openProj(title, desc) {
+            event.stopPropagation();
+            document.getElementById('modal-title').innerText = title;
+            document.getElementById('modal-desc').innerText = desc;
+            modal.classList.add('open');
+        }
+
+        function closeModal() {
+            event.stopPropagation();
+            modal.classList.remove('open');
+        }
+    </script>
+</body>
+</html>
